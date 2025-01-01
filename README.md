@@ -1,248 +1,147 @@
-<h1 align="center">Plus plugins</h1>
-<p align="center">
-<a href="https://flutter.dev/docs/development/packages-and-plugins/favorites" target="_blank" rel="noreferrer noopener">
-    <img src="./website/static/img/flutter-favorite-badge.png" width="20%" alt="build">
-</a>
-</p>
+# share_plus
 
-<p align="center">
-  <a href="https://github.com/fluttercommunity/plus_plugins/actions?query=workflow%3Aall_plugins">
-    <img src="https://github.com/fluttercommunity/plus_plugins/workflows/all_plugins/badge.svg" alt="all_plugins GitHub Workflow Status"/>
-  </a>
-  <a href="https://twitter.com/FlutterComm">
-    <img src="https://img.shields.io/twitter/follow/FlutterComm.svg?colorA=1da1f2&colorB=&label=Follow%20on%20Twitter" alt="Follow on Twitter">
-  </a>
-</p>
+[![Flutter Community: share_plus](https://fluttercommunity.dev/_github/header/share_plus)](https://github.com/fluttercommunity/community)
 
----
+[![share_plus](https://github.com/fluttercommunity/plus_plugins/actions/workflows/share_plus.yaml/badge.svg)](https://github.com/fluttercommunity/plus_plugins/actions/workflows/share_plus.yaml)
+[![pub points](https://img.shields.io/pub/points/share_plus?color=2E8B57&label=pub%20points)](https://pub.dev/packages/share_plus/score)
+[![pub package](https://img.shields.io/pub/v/share_plus.svg)](https://pub.dev/packages/share_plus)
 
-PlusPlugins is a set of Flutter plugins that is developed based on plugins, which previously existed
-as a part of [Flutter plugins](https://github.com/flutter/plugins), with extra functionalities,
-support for more platforms and better maintenance.
+<a href="https://flutter.dev/docs/development/packages-and-plugins/favorites" target="_blank" rel="noreferrer noopener"><img src="../../../website/static/img/flutter-favorite-badge.png" width="100" alt="build"></a>
 
-[Feedback](https://github.com/fluttercommunity/plus_plugins/issues) and [Pull Requests](https://github.com/fluttercommunity/plus_plugins/pulls) are most welcome!
+A Flutter plugin to share content from your Flutter app via the platform's
+share dialog.
 
-## Plugins
+Wraps the `ACTION_SEND` Intent on Android and `UIActivityViewController`
+on iOS.
 
-**Table of contents:**
-
-- [Battery➕ (`battery_plus`)](#battery_plus)
-- [Connectivity➕ (`connectivity_plus`)](#connectivity_plus)
-- [Device Info➕ (`device_info_plus`)](#device_info_plus)
-- [Network Info➕ (`network_info_plus`)](#network_info_plus)
-- [Package Info➕ (`package_info_plus`)](#package_info_plus)
-- [Sensor➕ (`sensors_plus`)](#sensors_plus)
-- [Share➕ (`share_plus`)](#share_plus)
-- [Android Alarm Manager➕ (`android_alarm_manager_plus`)](#android_alarm_manager_plus)
-- [Android Intent➕ (`android_intent_plus`)](#android_intent_plus)
-
----
-
-### `battery_plus`
-
-> [![battery_plus][battery_plus_badge_pub]][battery_plus] [![pub points][battery_plus_badge_pub_points]][battery_plus_pub_points]
-
-Flutter plugin for accessing information about the battery state(full, charging, discharging) on Android and iOS.
-
-[[View Source][battery_plus_code]]
-
-#### Platform Support
+## Platform Support
 
 | Android | iOS | MacOS | Web | Linux | Windows |
-| :-----: | :-: | :---: | :-: | :---: | :-----: |
-|   ✅   | ✅  |  ✅   | ✅  |  ✅   |  ✅  |
+| :-----: | :-: | :---: | :-: | :---: | :----: |
+|   ✅    | ✅  |  ✅   | ✅  |  ✅   |   ✅   |
 
----
+Also compatible with Windows and Linux by using "mailto" to share text via Email.
 
-### `connectivity_plus`
+Sharing files is not supported on Windows and Linux.
 
-> [![connectivity_plus][connectivity_plus_badge_pub]][connectivity_plus] [![pub points][connectivity_plus_badge_pub_points]][connectivity_plus_pub_points]
+## Usage
 
-Flutter plugin for discovering the state of the network (WiFi &
-mobile/cellular) connectivity on Android and iOS.
+To use this plugin, add `share_plus` as a [dependency in your pubspec.yaml file](https://plus.fluttercommunity.dev/docs/overview).
 
-[[View Source][connectivity_plus_code]]
+## Example
 
-#### Platform Support
+Import the library.
 
-| Android | iOS | MacOS | Web | Linux | Windows |
-| :-----: | :-: | :---: | :-: | :---: | :-----: |
-|   ✅    | ✅  |  ✅   | ✅  |  ✅   |   ✅    |
+```dart
+import 'package:share_plus/share_plus.dart';
+```
 
----
+Then invoke the static `share` method anywhere in your Dart code.
 
-### `device_info_plus`
+```dart
+Share.share('check out my website https://example.com');
+```
 
-> [![device_info_plus][device_info_plus_badge_pub]][device_info_plus] [![pub points][device_info_plus_badge_pub_points]][device_info_plus_pub_points]
+The `share` method also takes an optional `subject` that will be used when
+sharing to email.
 
-Flutter plugin providing detailed information about the device
-(make, model, etc.), and Android or iOS version the app is running on.
+```dart
+Share.share('check out my website https://example.com', subject: 'Look what I made!');
+```
 
-[[View Source][device_info_plus_code]]
+If you are interested in the action your user performed with the share sheet, you can instead use the `shareWithResult` method.
 
-#### Platform Support
+```dart
+final result = await Share.shareWithResult('check out my website https://example.com');
 
-| Android | iOS | MacOS | Web | Linux | Windows |
-| :-----: | :-: | :---: | :-: | :---: | :-----: |
-|   ✅    | ✅  |  ✅   | ✅  |  ✅   |   ✅    |
+if (result.status == ShareResultStatus.success) {
+    print('Thank you for sharing my website!');
+}
+```
 
----
+To share one or multiple files, invoke the static `shareXFiles` method anywhere in your Dart code. The method returns a `ShareResult`. Optionally, you can pass `subject`, `text` and `sharePositionOrigin`.
 
-### `network_info_plus`
+```dart
+final result = await Share.shareXFiles([XFile('${directory.path}/image.jpg')], text: 'Great picture');
 
-> [![network_info_plus][network_info_plus_badge_pub]][network_info_plus] [![pub points][network_info_plus_badge_pub_points]][network_info_plus_pub_points]
+if (result.status == ShareResultStatus.success) {
+    print('Thank you for sharing the picture!');
+}
+```
 
-Flutter plugin for discovering network info.
+```dart
+final result = await Share.shareXFiles([XFile('${directory.path}/image1.jpg'), XFile('${directory.path}/image2.jpg')]);
 
-[[View Source][network_info_plus_code]]
+if (result.status == ShareResultStatus.dismissed) {
+    print('Did you not like the pictures?');
+}
+```
 
-#### Platform Support
 
-| Android | iOS | MacOS | Web | Linux | Windows |
-| :-----: | :-: | :---: | :-: | :---: | :-----: |
-|   ✅    | ✅   |  ✅   | ❌  |  ✅   |   ✅    |
+On web, you can use `SharePlus.shareXFiles()`. This uses the [Web Share API](https://web.dev/web-share/)
+if it's available. Otherwise it falls back to downloading the shared files.
+See [Can I Use - Web Share API](https://caniuse.com/web-share) to understand
+which browsers are supported. This builds on the [`cross_file`](https://pub.dev/packages/cross_file)
+package.
 
----
 
-### `package_info_plus`
+```dart
+Share.shareXFiles([XFile('assets/hello.txt')], text: 'Great picture');
+```
 
-> [![package_info_plus][package_info_plus_badge_pub]][package_info_plus] [![pub points][package_info_plus_badge_pub_points]][package_info_plus_pub_points]
+## Known Issues
 
-Flutter plugin for querying information about the application
-package, such as CFBundleVersion on iOS or versionCode on Android.
+### Sharing data created with XFile.fromData
 
-[[View Source][package_info_plus_code]]
+When sharing data created with `XFile.fromData`, the plugin will write a temporal file inside the cache directory of the app, so it can be shared.
 
-#### Platform Support
+Although the OS should take care of deleting those files, it is advised, that you clean up this data once in a while (e.g. on app start).
 
-| Android | iOS | MacOS | Web | Linux | Windows |
-| :-----: | :-: | :---: | :-: | :---: | :-----: |
-|   ✅    | ✅  |  ✅   | ✅  |  ✅   |   ✅    |
+You can access this directory using [path_provider](https://pub.dev/packages/path_provider) [getTemporaryDirectory](https://pub.dev/documentation/path_provider/latest/path_provider/getTemporaryDirectory.html).
 
----
+Alternatively, don't use `XFile.fromData` and instead write the data down to a `File` with a path before sharing it, so you control when to delete it.
 
-### `sensors_plus`
+### Mobile platforms (Android and iOS)
 
-> [![sensors_plus][sensors_plus_badge_pub]][sensors_plus] [![pub points][sensors_plus_badge_pub_points]][sensors_plus_pub_points]
+#### Facebook limitations (WhatsApp, Instagram, Facebook Messenger)
 
-Flutter plugin for accessing accelerometer, gyroscope, and magnetometer sensors.
+Due to restrictions set up by Facebook this plugin isn't capable of sharing data reliably to Facebook related apps on Android and iOS. This includes eg. sharing text to the Facebook Messenger. If you require this functionality please check the native Facebook Sharing SDK ([https://developers.facebook.com/docs/sharing](https://developers.facebook.com/docs/sharing)) or search for other Flutter plugins implementing this SDK. More information can be found in [this issue](https://github.com/fluttercommunity/plus_plugins/issues/413).
 
-[[View Source][sensors_plus_code]]
+#### iPad
 
-#### Platform Support
+`share_plus` requires iPad users to provide the `sharePositionOrigin` parameter.
 
-| Android | iOS | MacOS | Web | Linux | Windows |
-| :-----: | :-: | :---: | :-: | :---: | :-----: |
-|   ✅    | ✅  |   ❌    | ✅  |   ❌    |    ❌     |
+Without it, `share_plus` will not work on iPads and may cause a crash or
+letting the UI not responding.
 
----
+To avoid that problem, provide the `sharePositionOrigin`.
 
-### `share_plus`
+For example:
 
-> [![share_plus][share_plus_badge_pub]][share_plus] [![pub points][share_plus_badge_pub_points]][share_plus_pub_points]
-
-Flutter plugin for sharing content via the platform share UI, using the ACTION_SEND intent on Android and UIActivityViewController on iOS.
-
-[[View Source][share_plus_code]]
-
-#### Platform Support
-
-| Android | iOS | MacOS | Web | Linux | Windows |
-| :-----: | :-: | :---: | :-: | :---: | :-----: |
-|   ✅   | ✅  |  ✅   | ✅  |  ✅   |   ✅    |
-
----
-
-### `android_alarm_manager_plus`
-
-> [![android_alarm_manager_plus][android_alarm_manager_plus_badge_pub]][android_alarm_manager_plus] [![pub points][android_alarm_manager_plus_badge_pub_points]][android_alarm_manager_plus_pub_points]
-
-Flutter plugin for accessing the Android AlarmManager service, and running Dart code in the background when alarms fire.
-
-[[View Source][android_alarm_manager_plus_code]]
-
-#### Platform Support
-
-| Android |
-| :-----: |
-|   ✅    |
-
----
-
-### `android_intent_plus`
-
-> [![android_intent_plus][android_intent_plus_badge_pub]][android_intent_plus] [![pub points][android_intent_plus_badge_pub_points]][android_intent_plus_pub_points]
-
-Flutter plugin for launching Android Intents. Not supported on iOS.
-
-[[View Source][android_intent_plus_code]]
-
-#### Platform Support
-
-| Android |
-| :-----: |
-|   ✅    |
-
----
-
-## Issues
-
-Please file PlusPlugins specific issues, bugs, or feature requests in our [issue tracker](https://github.com/fluttercommunity/plus_plugins/issues/new).
-
-Plugin issues that are not specific to PlusPlugins can be filed in the [Flutter issue tracker](https://github.com/flutter/flutter/issues/new).
-
-## Contributing
-
-If you wish to contribute a change to any of the existing plugins in this repo,
-please review our [contribution guide](https://github.com/fluttercommunity/plus_plugins/blob/master/CONTRIBUTING.md)
-and open a [pull request](https://github.com/fluttercommunity/plus_plugins/pulls).
-
-## Status
-
-This repository is maintained by FlutterCommunity authors. Issues here are answered by maintainers and other community members on GitHub on a best-effort basis.
-
-[battery_plus]: https://pub.dev/packages/battery_plus
-[battery_plus_code]: https://github.com/fluttercommunity/plus_plugins/tree/main/packages/battery_plus
-[battery_plus_pub_points]: https://pub.dev/packages/battery_plus/score
-[battery_plus_badge_pub_points]: https://img.shields.io/pub/points/battery_plus?color=2E8B57&label=pub%20points
-[battery_plus_badge_pub]: https://img.shields.io/pub/v/battery_plus.svg
-[connectivity_plus]: https://pub.dev/packages/connectivity_plus
-[connectivity_plus_code]: https://github.com/fluttercommunity/plus_plugins/tree/main/packages/connectivity_plus
-[connectivity_plus_pub_points]: https://pub.dev/packages/connectivity_plus/score
-[connectivity_plus_badge_pub_points]: https://img.shields.io/pub/points/connectivity_plus?color=2E8B57&label=pub%20points
-[connectivity_plus_badge_pub]: https://img.shields.io/pub/v/connectivity_plus.svg
-[network_info_plus]: https://pub.dev/packages/network_info_plus
-[network_info_plus_code]: https://github.com/fluttercommunity/plus_plugins/tree/main/packages/network_info_plus
-[network_info_plus_pub_points]: https://pub.dev/packages/network_info_plus/score
-[network_info_plus_badge_pub_points]: https://img.shields.io/pub/points/network_info_plus?color=2E8B57&label=pub%20points
-[network_info_plus_badge_pub]: https://img.shields.io/pub/v/network_info_plus.svg
-[android_alarm_manager_plus]: https://pub.dev/packages/android_alarm_manager_plus
-[android_alarm_manager_plus_code]: https://github.com/fluttercommunity/plus_plugins/tree/main/packages/android_alarm_manager_plus
-[android_alarm_manager_plus_pub_points]: https://pub.dev/packages/android_alarm_manager_plus/score
-[android_alarm_manager_plus_badge_pub_points]: https://img.shields.io/pub/points/android_alarm_manager_plus?color=2E8B57&label=pub%20points
-[android_alarm_manager_plus_badge_pub]: https://img.shields.io/pub/v/android_alarm_manager_plus.svg
-[android_intent_plus]: https://pub.dev/packages/android_intent_plus
-[android_intent_plus_code]: https://github.com/fluttercommunity/plus_plugins/tree/main/packages/android_intent_plus
-[android_intent_plus_pub_points]: https://pub.dev/packages/android_intent_plus/score
-[android_intent_plus_badge_pub_points]: https://img.shields.io/pub/points/android_intent_plus?color=2E8B57&label=pub%20points
-[android_intent_plus_badge_pub]: https://img.shields.io/pub/v/android_intent_plus.svg
-[device_info_plus]: https://pub.dev/packages/device_info_plus
-[device_info_plus_code]: https://github.com/fluttercommunity/plus_plugins/tree/main/packages/device_info_plus
-[device_info_plus_pub_points]: https://pub.dev/packages/device_info_plus/score
-[device_info_plus_badge_pub_points]: https://img.shields.io/pub/points/device_info_plus?color=2E8B57&label=pub%20points
-[device_info_plus_badge_pub]: https://img.shields.io/pub/v/device_info_plus.svg
-[package_info_plus]: https://pub.dev/packages/package_info_plus
-[package_info_plus_code]: https://github.com/fluttercommunity/plus_plugins/tree/main/packages/package_info_plus
-[package_info_plus_pub_points]: https://pub.dev/packages/package_info_plus/score
-[package_info_plus_badge_pub_points]: https://img.shields.io/pub/points/package_info_plus?color=2E8B57&label=pub%20points
-[package_info_plus_badge_pub]: https://img.shields.io/pub/v/package_info_plus.svg
-[sensors_plus]: https://pub.dev/packages/sensors_plus
-[sensors_plus_code]: https://github.com/fluttercommunity/plus_plugins/tree/main/packages/sensors_plus
-[sensors_plus_pub_points]: https://pub.dev/packages/sensors_plus/score
-[sensors_plus_badge_pub_points]: https://img.shields.io/pub/points/sensors_plus?color=2E8B57&label=pub%20points
-[sensors_plus_badge_pub]: https://img.shields.io/pub/v/sensors_plus.svg
-[share_plus]: https://pub.dev/packages/share_plus
-[share_plus_code]: https://github.com/fluttercommunity/plus_plugins/tree/main/packages/share_plus
-[share_plus_pub_points]: https://pub.dev/packages/share_plus/score
-[share_plus_badge_pub_points]: https://img.shields.io/pub/points/share_plus?color=2E8B57&label=pub%20points
-[share_plus_badge_pub]: https://img.shields.io/pub/v/share_plus.svg
+```dart
+// Use Builder to get the widget context
+Builder(
+  builder: (BuildContext context) {
+    return ElevatedButton(
+      onPressed: () => _onShare(context),
+          child: const Text('Share'),
+     );
+  },
+),
+
+// _onShare method:
+final box = context.findRenderObject() as RenderBox?;
+
+await Share.share(
+  text,
+  subject: subject,
+  sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+);
+```
+
+See the `main.dart` in the `example` for a complete example.
+
+## Learn more
+
+- [API Documentation](https://pub.dev/documentation/share_plus/latest/share_plus/share_plus-library.html)
+- [Plugin documentation website](https://plus.fluttercommunity.dev/docs/share_plus/overview)
